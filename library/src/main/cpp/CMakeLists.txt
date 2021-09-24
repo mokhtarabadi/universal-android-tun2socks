@@ -1,48 +1,118 @@
-# For more information about using CMake with Android Studio, read the
-# documentation: https://d.android.com/studio/projects/add-native-code.html
-
-# Sets the minimum version of CMake required to build the native library.
-
 cmake_minimum_required(VERSION 3.10.2)
 
-# Declares and names the project.
+project("tun2socks-bridge")
 
-project("library")
+include_directories(prebuilt)
 
-# Creates and names a library, sets it as either STATIC
-# or SHARED, and provides the relative paths to its source code.
-# You can define multiple libraries, and CMake builds them for you.
-# Gradle automatically packages shared libraries with your APK.
+# base
+add_library(badvpn-base
+        SHARED
+        IMPORTED)
+set_target_properties(
+        badvpn-base
+        PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/prebuilt/${ANDROID_ABI}/libbadvpn-base.so)
 
-add_library( # Sets the name of the library.
-             library
+# flow
+add_library(badvpn-flow
+        SHARED
+        IMPORTED)
+set_target_properties(
+        badvpn-flow
+        PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/prebuilt/${ANDROID_ABI}/libbadvpn-flow.so)
 
-             # Sets the library as a shared library.
-             SHARED
+# flowextra
+add_library(badvpn-flowextra
+        SHARED
+        IMPORTED)
+set_target_properties(
+        badvpn-flowextra
+        PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/prebuilt/${ANDROID_ABI}/libbadvpn-flowextra.so)
 
-             # Provides a relative path to your source file(s).
-             library.cpp )
+# lwip
+add_library(badvpn-lwip
+        SHARED
+        IMPORTED)
+set_target_properties(
+        badvpn-lwip
+        PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/prebuilt/${ANDROID_ABI}/libbadvpn-lwip.so)
 
-# Searches for a specified prebuilt library and stores the path as a
-# variable. Because CMake includes system libraries in the search path by
-# default, you only need to specify the name of the public NDK library
-# you want to add. CMake verifies that the library exists before
-# completing its build.
+# socks_udp_client
+add_library(badvpn-socks_udp_client
+        SHARED
+        IMPORTED)
+set_target_properties(
+        badvpn-socks_udp_client
+        PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/prebuilt/${ANDROID_ABI}/libbadvpn-socks_udp_client.so)
 
-find_library( # Sets the name of the path variable.
-              log-lib
+# socksclient
+add_library(badvpn-socksclient
+        SHARED
+        IMPORTED)
+set_target_properties(
+        badvpn-socksclient
+        PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/prebuilt/${ANDROID_ABI}/libbadvpn-socksclient.so)
 
-              # Specifies the name of the NDK library that
-              # you want CMake to locate.
-              log )
+# system
+add_library(badvpn-system
+        SHARED
+        IMPORTED)
+set_target_properties(
+        badvpn-system
+        PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/prebuilt/${ANDROID_ABI}/libbadvpn-system.so)
 
-# Specifies libraries CMake should link to your target library. You
-# can link multiple libraries, such as libraries you define in this
-# build script, prebuilt third-party libraries, or system libraries.
+# tun2socks
+add_library(badvpn-tun2socks
+        SHARED
+        IMPORTED)
+set_target_properties(
+        badvpn-tun2socks
+        PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/prebuilt/${ANDROID_ABI}/libbadvpn-tun2socks.so)
 
-target_link_libraries( # Specifies the target library.
-                       library
+# tuntap
+add_library(badvpn-tuntap
+        SHARED
+        IMPORTED)
+set_target_properties(
+        badvpn-tuntap
+        PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/prebuilt/${ANDROID_ABI}/libbadvpn-tuntap.so)
 
-                       # Links the target library to the log library
-                       # included in the NDK.
-                       ${log-lib} )
+# udpgw_client
+add_library(badvpn-udpgw_client
+        SHARED
+        IMPORTED)
+set_target_properties(
+        badvpn-udpgw_client
+        PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/prebuilt/${ANDROID_ABI}/libbadvpn-udpgw_client.so)
+
+# tun2socks-bridge
+add_library(tun2socks-bridge
+        SHARED
+        tun2socks-bridge.cpp)
+
+# log-lib
+find_library(log-lib
+        log)
+
+target_link_libraries(
+        tun2socks-bridge
+        badvpn-base
+        badvpn-flow
+        badvpn-flowextra
+        badvpn-lwip
+        badvpn-socks_udp_client
+        badvpn-socksclient
+        badvpn-system
+        badvpn-tun2socks
+        badvpn-tuntap
+        badvpn-udpgw_client
+        ${log-lib})

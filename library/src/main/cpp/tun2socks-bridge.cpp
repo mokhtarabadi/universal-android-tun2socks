@@ -66,9 +66,21 @@ int start_redirecting_stdout_stderr() {
 }
 
 extern "C"
+JNIEXPORT void JNICALL
+Java_com_mokhtarabadi_tun2socks_library_Tun2SocksBridge_printHelp(JNIEnv *env, jclass clazz) {
+    print_help("badvpn-tun2socks");
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_mokhtarabadi_tun2socks_library_Tun2SocksBridge_printVersion(JNIEnv *env, jclass clazz) {
+    print_version();
+}
+
+extern "C"
 JNIEXPORT jint JNICALL
-Java_com_mokhtarabadi_tun2socks_library_Tun2SocksBridge_start(JNIEnv *env, jclass clazz,
-                                                              jobjectArray args) {
+Java_com_mokhtarabadi_tun2socks_library_Tun2SocksBridge__1native_1start(JNIEnv *env, jclass clazz,
+                                                                        jobjectArray args) {
 
     //argc
     jsize argument_count = env->GetArrayLength(args);
@@ -116,4 +128,10 @@ Java_com_mokhtarabadi_tun2socks_library_Tun2SocksBridge_start(JNIEnv *env, jclas
     free(args_buffer);
 
     return jint(result);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_mokhtarabadi_tun2socks_library_Tun2SocksBridge_terminate(JNIEnv *env, jclass clazz) {
+    terminate();
 }

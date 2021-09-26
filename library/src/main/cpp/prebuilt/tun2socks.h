@@ -55,6 +55,9 @@
 extern "C" {
 #endif
 int start (int argc, char **argv);
+void terminate (void);
+void print_help (const char *name);
+void print_version (void);
 #ifdef __cplusplus
 }
 #endif

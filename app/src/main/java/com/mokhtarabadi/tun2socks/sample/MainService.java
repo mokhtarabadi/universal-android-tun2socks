@@ -125,7 +125,7 @@ public class MainService extends VpnService {
 
         new Thread(() -> {
             boolean result = Tun2SocksBridge.start(
-                    Tun2SocksBridge.LogLevel.DEBUG,
+                    Tun2SocksBridge.LogLevel.INFO,
                     descriptor,
                     PRIVATE_MTU,
                     "127.0.0.1", 1080, // i used termux to setup an socks5 server
@@ -148,14 +148,7 @@ public class MainService extends VpnService {
         stopForeground(true);
 
         Tun2SocksBridge.terminate();
-
-        try {
-            descriptor.close(); // not work because we called detachFd(), so safely kill process or try close fd in tun2socks!
-        } catch (IOException e) {
-            Log.e(TAG, "failed to close descriptor", e);
-        }
-        descriptor = null;
-
+        descriptor = null; // TODO: 9/26/21 close file descriptor in native code
         stopSelf();
 
         Process.killProcess(Process.myPid()); // need run process in another process!!

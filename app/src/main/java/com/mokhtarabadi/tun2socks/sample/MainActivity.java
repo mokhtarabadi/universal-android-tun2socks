@@ -1,49 +1,56 @@
 package com.mokhtarabadi.tun2socks.sample;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-
-import com.google.android.material.button.MaterialButton;
-import com.mokhtarabadi.tun2socks.library.Tun2SocksBridge;
+import com.mokhtarabadi.tun2socks.sample.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        MaterialButton startMaterialButton = findViewById(R.id.start_vpn_btn);
-        startMaterialButton.setOnClickListener(v -> {
+        binding.start.setOnClickListener(v -> {
             Intent intent = MainService.prepare(this);
             if (intent != null) {
                 startActivityForResult(intent, 1);
             } else {
-                Intent intent2 = new Intent(this, MainService.class);
-                intent2.setAction(MainService.ACTION_START);
-                ContextCompat.startForegroundService(this, intent2);
+                toggleVpnService(true);
             }
         });
 
-        MaterialButton stopMaterialButton = findViewById(R.id.stop_vpn_btn);
-        stopMaterialButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainService.class);
-            intent.setAction(MainService.ACTION_STOP);
-            ContextCompat.startForegroundService(this, intent);
-        });
+        binding.stop.setOnClickListener(v -> toggleVpnService(false));
+        binding.settings.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            ContextCompat.startForegroundService(this, new Intent(this, MainService.class));
+            toggleVpnService(true);
+        } else {
+            Toast.makeText(this, "Really!?", Toast.LENGTH_LONG).show();
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(false);
+    }
+
+    private void toggleVpnService(boolean start) {
+        Intent intent = new Intent(this, MainService.class);
+        intent.setAction(start ? MainService.ACTION_START : MainService.ACTION_STOP);
+        ContextCompat.startForegroundService(this, intent);
     }
 }

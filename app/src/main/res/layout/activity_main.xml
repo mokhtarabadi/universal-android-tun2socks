@@ -9,16 +9,22 @@
     tools:context=".MainActivity">
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/start_vpn_btn"
+        android:id="@+id/start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start!" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/stop_vpn_btn"
+        android:id="@+id/stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Stop!" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>
 

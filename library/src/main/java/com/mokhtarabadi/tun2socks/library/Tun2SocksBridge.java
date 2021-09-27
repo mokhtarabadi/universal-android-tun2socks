@@ -87,7 +87,7 @@ public class Tun2SocksBridge {
         arguments.add("badvpn-tun2socks"); // app name (:D)
         arguments.addAll(Arrays.asList("--logger", "stdout")); // set logger to stdout so can see logs in logcat
         arguments.addAll(Arrays.asList("--loglevel", String.valueOf(logLevel.ordinal()))); // set log level
-        arguments.addAll(Arrays.asList("--tunfd", String.valueOf(vpnInterfaceFileDescriptor.detachFd()))); // set fd, because we pass fd we called detachFd()
+        arguments.addAll(Arrays.asList("--tunfd", String.valueOf(vpnInterfaceFileDescriptor.getFd()))); // set fd
         arguments.addAll(Arrays.asList("--tunmtu", String.valueOf(vpnInterfaceMtu)));
         arguments.addAll(Arrays.asList("--netif-ipaddr", netIPv4Address));
 
@@ -128,4 +128,5 @@ public class Tun2SocksBridge {
      * @return other than zero mean failed
      */
     private static native int _native_start(String[] args);
+
 }

@@ -54,7 +54,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-int start (int argc, char **argv);
+int start_tun2socks (int argc, char **argv);
 void terminate (void);
 void print_help (const char *name);
 void print_version (void);

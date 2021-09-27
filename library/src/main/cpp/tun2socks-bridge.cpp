@@ -124,7 +124,7 @@ Java_com_mokhtarabadi_tun2socks_library_Tun2SocksBridge__1native_1start(JNIEnv *
     }
 
     //Start badvpn-tun2socks, with argc and argv.
-    int result = start(argument_count, argv);
+    int result = start_tun2socks(argument_count, argv);
     free(args_buffer);
 
     return jint(result);

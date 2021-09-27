@@ -118,6 +118,8 @@ public class MainService extends VpnService {
             stopPendingIntent = PendingIntent.getService(this, 1, stopIntent, 0);
         }
 
+        PendingIntent contentPendingIntent = PendingIntent.getActivity(this, 2, new Intent(this, MainActivity.class), 0);
+
         notification = new NotificationCompat.Builder(this, notificationChannel.getId())
                 .setContentTitle("Vpn service")
                 .setContentText("Testing Tun2Socks")
@@ -129,6 +131,7 @@ public class MainService extends VpnService {
                 .setShowWhen(false)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setDefaults(NotificationCompat.FLAG_ONLY_ALERT_ONCE)
+                .setContentIntent(contentPendingIntent)
                 .build();
     }
 

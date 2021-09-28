@@ -84,7 +84,6 @@ public class MainService extends VpnService {
     @Override
     public void onRevoke() {
         stopService();
-        super.onRevoke();
     }
 
     @Override

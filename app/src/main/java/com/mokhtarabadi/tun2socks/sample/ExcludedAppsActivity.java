@@ -51,14 +51,14 @@ public class ExcludedAppsActivity extends AppCompatActivity {
         binding = ActivityExcludedAppsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        original = new ArrayList<>();
+        original = Collections.synchronizedList(new ArrayList<>());
         dataSet = new ArrayList<>();
 
         selected = new ArrayList<>(PreferenceHelper.getExcludedApps());
 
         binding.recycler.setHasFixedSize(true);
         binding.recycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        binding.recycler.setAdapter(adapter = new AppAdapter(this));
+        binding.recycler.setAdapter(adapter = new AppAdapter());
 
         loadPackages();
     }
@@ -129,21 +129,21 @@ public class ExcludedAppsActivity extends AppCompatActivity {
 
     private class AppViewHolder extends RecyclerView.ViewHolder {
 
-        private final Context mContext;
+        private final Context context;
         private final LayoutAppItemBinding itemBinding;
 
-        public AppViewHolder(@NonNull LayoutAppItemBinding itemBinding, Context context) {
+        public AppViewHolder(@NonNull LayoutAppItemBinding itemBinding) {
             super(itemBinding.getRoot());
 
-            mContext = context;
+            context = ExcludedAppsActivity.this;
             this.itemBinding = itemBinding;
         }
 
         private void bind(PackageInfo packageInfo) {
-            itemBinding.label.setText(mContext.getPackageManager().getApplicationLabel(packageInfo.applicationInfo));
+            itemBinding.label.setText(context.getPackageManager().getApplicationLabel(packageInfo.applicationInfo));
             itemBinding.packageName.setText(packageInfo.packageName);
             itemBinding.excluded.setChecked(selected.contains(packageInfo.packageName));
-            itemBinding.icon.setImageDrawable(mContext.getPackageManager().getApplicationIcon(packageInfo.applicationInfo));
+            itemBinding.icon.setImageDrawable(context.getPackageManager().getApplicationIcon(packageInfo.applicationInfo));
         }
     }
 
@@ -170,13 +170,7 @@ public class ExcludedAppsActivity extends AppCompatActivity {
     }
 
     private class AppAdapter extends RecyclerView.Adapter<AppViewHolder> implements Filterable {
-
-        private final Context mContext;
         private AppFilter appFilter;
-
-        public AppAdapter(Context context) {
-            mContext = context;
-        }
 
         private void filter(List<PackageInfo> newItems) {
             DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new AppDiffCallback(dataSet, newItems));
@@ -188,9 +182,9 @@ public class ExcludedAppsActivity extends AppCompatActivity {
         @NonNull
         @Override
         public AppViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LayoutAppItemBinding itemBinding = LayoutAppItemBinding.inflate(LayoutInflater.from(mContext), parent, false);
+            LayoutAppItemBinding itemBinding = LayoutAppItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
             itemBinding.getRoot().setOnClickListener(new AppClickListener());
-            return new AppViewHolder(itemBinding, mContext);
+            return new AppViewHolder(itemBinding);
         }
 
         @Override
@@ -206,18 +200,17 @@ public class ExcludedAppsActivity extends AppCompatActivity {
         @Override
         public Filter getFilter() {
             if (appFilter == null) {
-                appFilter = new AppFilter(mContext);
+                appFilter = new AppFilter();
             }
             return appFilter;
         }
     }
 
     private class AppFilter extends Filter {
+        private final Context context;
 
-        private final Context mContext;
-
-        public AppFilter(Context context) {
-            mContext = context;
+        public AppFilter() {
+            this.context = ExcludedAppsActivity.this;
         }
 
         @Override
@@ -232,7 +225,7 @@ public class ExcludedAppsActivity extends AppCompatActivity {
                 String query = constraint.toString().toUpperCase(Locale.getDefault()); // search both lower/upper case
 
                 for (PackageInfo packageInfo : original) {
-                    if (mContext.getPackageManager().getApplicationLabel(packageInfo.applicationInfo).toString().toUpperCase(Locale.getDefault()).contains(query) || packageInfo.packageName.toUpperCase(Locale.US).contains(query)) {
+                    if (context.getPackageManager().getApplicationLabel(packageInfo.applicationInfo).toString().toUpperCase(Locale.getDefault()).contains(query) || packageInfo.packageName.toUpperCase(Locale.US).contains(query)) {
                         filteredDataSet.add(packageInfo);
                     }
                 }

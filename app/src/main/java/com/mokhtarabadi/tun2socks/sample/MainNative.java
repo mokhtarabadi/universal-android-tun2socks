@@ -1,4 +1,4 @@
-package com.mokhtarabadi.tun2socks.library;
+package com.mokhtarabadi.tun2socks.sample;
 
 import android.content.Context;
 import android.net.VpnService;
@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class Tun2SocksBridge {
+public class MainNative {
 
-    private static final String TAG = "tun2socks-bridge";
+    private static final String TAG = "tun2socks";
     private static volatile boolean isInitialized = false;
 
     /**
@@ -42,7 +42,7 @@ public class Tun2SocksBridge {
             return;
         }
 
-        ReLinker.log(message -> Log.d(TAG, message)).recursively().loadLibrary(context, "tun2socks-bridge", new ReLinker.LoadListener() {
+        ReLinker.log(message -> Log.d(TAG, message)).recursively().loadLibrary(context, "native-lib", new ReLinker.LoadListener() {
             @Override
             public void success() {
                 isInitialized = true;
@@ -70,7 +70,7 @@ public class Tun2SocksBridge {
      * @param forwardUdp                 if socks5 server support UDP, set this to true otherwise set to false
      * @return true of process finished successfully false if there is a problem!
      */
-    public static boolean start(
+    public static boolean startTun2Socks(
             LogLevel logLevel,
             ParcelFileDescriptor vpnInterfaceFileDescriptor,
             int vpnInterfaceMtu,
@@ -102,24 +102,9 @@ public class Tun2SocksBridge {
             arguments.add("--socks5-udp");
         }
 
-        int exitCode = _native_start(arguments.toArray(new String[]{}));
+        int exitCode = start_tun2socks(arguments.toArray(new String[]{}));
         return exitCode == 0;
     }
-
-    /**
-     * try to stop badvpn-tun2socks
-     */
-    public static native void terminate();
-
-    /**
-     * print usage help in logcat
-     */
-    public static native void printHelp();
-
-    /**
-     * print version in logcat
-     */
-    public static native void printVersion();
 
     /**
      * start tun2socks with args
@@ -127,6 +112,21 @@ public class Tun2SocksBridge {
      * @param args like when you run main() method on c!
      * @return other than zero mean failed
      */
-    private static native int _native_start(String[] args);
+    private static native int start_tun2socks(String[] args);
+
+    /**
+     * try to stop badvpn-tun2socks
+     */
+    public static native void stopTun2Socks();
+
+    /**
+     * print usage help in logcat
+     */
+    public static native void printTun2SocksHelp();
+
+    /**
+     * print version in logcat
+     */
+    public static native void printTun2SocksVersion();
 
 }

@@ -4,14 +4,14 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <android/log.h>
-#include "tun2socks.h"
+#include <tun2socks/tun2socks.h>
 
 // Start threads to redirect stdout and stderr to logcat.
 int pipe_stdout[2];
 int pipe_stderr[2];
 pthread_t thread_stdout;
 pthread_t thread_stderr;
-const char *ADBTAG = "tun2socks_bridge";
+const char *ADBTAG = "native-lib";
 
 void *thread_stderr_func(void *) {
     ssize_t redirect_size;
@@ -66,22 +66,9 @@ int start_redirecting_stdout_stderr() {
 }
 
 extern "C"
-JNIEXPORT void JNICALL
-Java_com_mokhtarabadi_tun2socks_library_Tun2SocksBridge_printHelp(JNIEnv *env, jclass clazz) {
-    print_help("badvpn-tun2socks");
-}
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_mokhtarabadi_tun2socks_library_Tun2SocksBridge_printVersion(JNIEnv *env, jclass clazz) {
-    print_version();
-}
-
-extern "C"
 JNIEXPORT jint JNICALL
-Java_com_mokhtarabadi_tun2socks_library_Tun2SocksBridge__1native_1start(JNIEnv *env, jclass clazz,
-                                                                        jobjectArray args) {
-
+Java_com_mokhtarabadi_tun2socks_sample_MainNative_start_1tun2socks(JNIEnv *env, jclass clazz,
+                                                                   jobjectArray args) {
     //argc
     jsize argument_count = env->GetArrayLength(args);
 
@@ -96,7 +83,7 @@ Java_com_mokhtarabadi_tun2socks_library_Tun2SocksBridge__1native_1start(JNIEnv *
     //Stores arguments in contiguous memory.
     char *args_buffer = (char *) calloc(c_arguments_size, sizeof(char));
 
-    //argv to pass into badvpn-tun2socks.
+    //argv to pass into tun2socks.
     char *argv[argument_count];
 
     //To iterate through the expected start position of each argument in args_buffer.
@@ -123,8 +110,8 @@ Java_com_mokhtarabadi_tun2socks_library_Tun2SocksBridge__1native_1start(JNIEnv *
                             "Couldn't start redirecting stdout and stderr to logcat.");
     }
 
-    //Start badvpn-tun2socks, with argc and argv.
-    int result = start_tun2socks(argument_count, argv);
+    //Start tun2socks, with argc and argv.
+    int result = tun2socks_start(argument_count, argv);
     free(args_buffer);
 
     return jint(result);
@@ -132,6 +119,18 @@ Java_com_mokhtarabadi_tun2socks_library_Tun2SocksBridge__1native_1start(JNIEnv *
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_mokhtarabadi_tun2socks_library_Tun2SocksBridge_terminate(JNIEnv *env, jclass clazz) {
-    terminate();
+Java_com_mokhtarabadi_tun2socks_sample_MainNative_stopTun2Socks(JNIEnv *env, jclass clazz) {
+    tun2socks_terminate();
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_mokhtarabadi_tun2socks_sample_MainNative_printTun2SocksHelp(JNIEnv *env, jclass clazz) {
+    tun2socks_print_help("badvpn-tun2socks");
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_mokhtarabadi_tun2socks_sample_MainNative_printTun2SocksVersion(JNIEnv *env, jclass clazz) {
+    tun2socks_print_version();
 }

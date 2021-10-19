@@ -8,4 +8,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Universal Android Tun2Socks"
 include ':app'
-include ':library'

@@ -5,12 +5,12 @@ import android.content.Context;
 
 public class MainApp extends Application {
 
-    public volatile static Context appContext;
+  public static volatile Context appContext;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+  @Override
+  public void onCreate() {
+    super.onCreate();
 
-        appContext = getApplicationContext();
-    }
+    appContext = getApplicationContext();
+  }
 }

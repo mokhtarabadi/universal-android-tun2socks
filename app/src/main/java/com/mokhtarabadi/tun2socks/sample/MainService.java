@@ -27,10 +27,10 @@ import java.io.InputStreamReader;
 
 public class MainService extends VpnService {
 
-  private static final String TAG = "vpn_service";
-
   public static final String ACTION_START = "tun2socks_sample_start";
   public static final String ACTION_STOP = "tun2socks_sample_stop";
+
+  private static final String TAG = "vpn_service";
 
   private static final String PRIVATE_VLAN4_CLIENT = "10.0.0.1";
   private static final String PRIVATE_VLAN4_ROUTER = "10.0.0.2";
@@ -42,6 +42,8 @@ public class MainService extends VpnService {
 
   private static final int PRIVATE_MTU = 1500;
 
+  private static volatile boolean isTun2SocksRunning = false;
+
   private ConnectivityManager connectivityManager;
   private Notification notification;
   private ParcelFileDescriptor descriptor;
@@ -49,9 +51,7 @@ public class MainService extends VpnService {
 
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
   private NetworkConnectivityMonitor networkConnectivityMonitor;
-
   private boolean networkConnectivityMonitorStarted = false;
-  private static volatile boolean isTun2SocksRunning = false;
 
   @Override
   public void onCreate() {
